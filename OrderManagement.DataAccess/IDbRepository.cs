@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -38,12 +39,14 @@ namespace OrderManagement.DataAccess
         /// <param name="id">Id объекта</param>
         /// <returns></returns>
         Task RemoveAsync<T>(int id) where T : class, IEntity;
+
         /// <summary>
         /// Обновление записи в БД
         /// </summary>
         /// <typeparam name="T">Тип объекта</typeparam>
         /// <param name="entity">Объект для обновления</param>
         /// <returns></returns>
+        Task RemoveRange<T>(IEnumerable<T> entities) where T : class, IEntity;
         Task UpdateAsync<T>(T entity) where T : class, IEntity;
         /// <summary>
         /// Сохрание изменений

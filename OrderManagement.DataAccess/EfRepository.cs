@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -60,6 +61,11 @@ namespace OrderManagement.DataAccess
             var entity = await _context.Set<T>().FirstOrDefaultAsync(x => x.Id == id);
             await Task.Run(() => _context.Set<T>().Remove(entity));
         }
+        public async Task RemoveRange<T>(IEnumerable<T> entities) where T : class, IEntity
+        {
+            await Task.Run(() => _context.Set<T>().RemoveRange(entities));
+        }
+
 
         /// <summary>
         /// Обновление записи в БД

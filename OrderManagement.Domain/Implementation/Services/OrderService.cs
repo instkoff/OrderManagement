@@ -58,13 +58,15 @@ namespace OrderManagement.Domain.Implementation.Services
         public async Task<int> Update(OrderModel orderModel)
         {
             var orderEntity = _mapper.Map<OrderEntity>(orderModel);
-            await _dbRepository.UpdateAsync<OrderEntity>(orderEntity);
+            await _dbRepository.UpdateAsync(orderEntity);
             await _dbRepository.SaveChangesAsync();
             return orderEntity.Id;
         }
 
         public async Task Delete(int id)
         {
+            //var itemsCollection = await _dbRepository.Get<OrderItemEntity>(oi => oi.OrderEntityId == id).ToListAsync();
+            //await _dbRepository.RemoveRange(itemsCollection);
             await _dbRepository.RemoveAsync<OrderEntity>(id);
             await _dbRepository.SaveChangesAsync();
         }
