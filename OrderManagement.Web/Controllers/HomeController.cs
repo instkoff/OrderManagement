@@ -41,15 +41,6 @@ namespace OrderManagement.Web.Controllers
             return PartialView("_OrdersTable", ordersCollection);
         }
 
-        [HttpGet("add-order-form")]
-        public ActionResult AddOrderForm()
-        {
-            var providers = _providerService.GetAll();
-            ViewBag.Providers = new SelectList(providers, "Id", "Name");
-            var orderModel = new OrderModel();
-            orderModel.OrderItems.Add(new OrderItemModel());
-            return View(orderModel);
-        }
 
     }
 }

@@ -44,6 +44,12 @@ namespace OrderManagement.Domain.Implementation.Services
             var orderModels = _mapper.Map<List<OrderModel>>(orderCollection);
             return orderModels;
         }
+        public List<ProviderModel> GetAllProviders()
+        {
+            var providerCollection = _dbRepository.GetAll<ProviderEntity>();
+            var providerModels = _mapper.Map<List<ProviderModel>>(providerCollection);
+            return providerModels;
+        }
 
         public async Task<OrderModel> Get(int id)
         {

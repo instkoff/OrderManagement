@@ -1,6 +1,6 @@
 ﻿<div class="container-fluid">
     <div class="container">
-        <a class="btn btn-success" asp-action="AddOrderForm">Добавить заказ</a>
+        <a class="btn btn-success" asp-action="AddOrderForm" asp-controller="Order">Добавить заказ</a>
     </div>
     <div class="container" id="ordersTable">
         ...Loading
@@ -13,7 +13,7 @@
         let appSettings = {
             Urls: {
                 getOrders: "@Url.Action("ShowOrdersTable", "Home")",
-                addOrder: "@Url.Action("AddOrderForm", "Home")"
+                addOrder: "@Url.Action("AddOrderForm", "Order")"
             },
             ordersTableContainer: "#ordersTable"
         };

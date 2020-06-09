@@ -8,6 +8,7 @@ namespace OrderManagement.Domain.Contracts
     {
         Task<int> Create(OrderModel orderModel);
         List<OrderModel> GetAll();
+        List<ProviderModel> GetAllProviders();
         Task<OrderModel> Get(int id);
         Task<int> Update(OrderModel orderModel);
         Task Delete(int id);

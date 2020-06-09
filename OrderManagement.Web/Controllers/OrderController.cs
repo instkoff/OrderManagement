@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using OrderManagement.Domain.Contracts;
 using OrderManagement.Domain.Contracts.Exceptions;
 using OrderManagement.Domain.Contracts.Models;
@@ -19,7 +20,7 @@ namespace OrderManagement.Web.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<ActionResult<int>> Create([Bind("Name,Date,ProviderId,OrderItems")] OrderModel order)
+        public async Task<ActionResult<int>> Create([FromForm][Bind("Name,Date,Provider,OrderItems")] OrderModel order)
         {
             if (!ModelState.IsValid)
                 throw new ValidationException("Form validation error");
@@ -31,9 +32,18 @@ namespace OrderManagement.Web.Controllers
 
             return RedirectToAction("Index", "Home");
         }
+        [HttpGet("add-order-form")]
+        public ActionResult AddOrderForm()
+        {
+            var providers = _orderService.GetAllProviders();
+            ViewBag.Providers = new SelectList(providers, "Id", "Name");
+            var orderModel = new OrderModel();
+            orderModel.OrderItems.Add(new OrderItemModel());
+            return View(orderModel);
+        }
 
         [HttpPost("add-order-item")]
-        public ActionResult AddOrderItem([Bind("OrderItems")] OrderModel order)
+        public ActionResult AddOrderItem([FromForm] OrderModel order)
         {
             order.OrderItems.Add(new OrderItemModel());
             return PartialView("_OrderItems", order);
