@@ -13,7 +13,7 @@
         </div>
         <div class="form-group col-md-5">
             <label asp-for="Date">Дата:</label>
-            <input asp-for="Date" class="form-control" required value="@DateTime.Now.ToString("yyyy-MM-ddThh:mm")" placeholder="Дата заказа">
+            <input asp-for="Date" class="form-control" required value="@DateTime.Now.ToString("yyyy-MM-ddThh:mm:ss")" placeholder="Дата заказа">
             <span asp-validation-for="Date" class="text-danger"></span>
         </div>
     </div>
@@ -22,11 +22,41 @@
         <select asp-for="Provider.Id" asp-items="ViewBag.Providers" class="form-control"></select>
     </div>
     <div id="orderItemContainer">
-        @Html.EditorFor(model=>model.OrderItems)
-    </div>
-    <div class="row">
-        <div class="col-md-4">
-            <input class="btn btn-light" type="button" id="btnAdd" value="Добавить"/>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="order-item-name"></label>
+                    <input name="order-item-name" id="order-item-name" class="form-control" />
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="order-item-quantity"></label>
+                    <input name="order-item-quantity" id="order-item-quantity" class="form-control" />
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="order-item-unit"></label>
+                    <input name="order-item-unit" id="order-item-unit" class="form-control" />
+                </div>
+            </div>
+            <div class="col-md-4">
+                <input class="btn btn-light" type="button" id="btnAdd" value="Добавить"/>
+            </div>
+            <table class="table table-hover" id="orderItemsTable">
+                <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Название:</th>
+                    <th scope="col">Количество:</th>
+                    <th scope="col">Unit</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
         </div>
     </div>
     <button type="submit" class="btn btn-primary">Сохранить</button>
@@ -40,18 +70,17 @@
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
     <script type="text/javascript">
-        let urlToAddItem = "@Url.Action("AddOrderItem","Order")";
-        $("#btnAdd").on('click', function () {
-                $.ajax({
-                    async: true,
-                    data: $('#form').serialize(),
-                    type: "POST",
-                    url: urlToAddItem,
-                    success: function (partialView) {
-                        console.log("partialView: "+partialView);
-                        $('#orderItemContainer').html(partialView);
-                    }
-                });
+        let orderItemList = [];
+        $("#btnAdd").on("click",
+            function () {
+                let orderItem = {
+                    id: 0,
+                    name: $("#order-item-name").val(),
+                    quantity: $("#order-item-name").val(),
+                    unit: $("#order-item-name").val()
+                }
+                orderItemList.push(orderItem);
+                $("#orderItemsTable").append('<tr><th scope="row">1</th><td>'+ orderItem.name +'</td><td>'+ orderItem.quantity +'</td><td>'+ orderItem.unit +'</td></tr>');
             });
     </script>
 }
