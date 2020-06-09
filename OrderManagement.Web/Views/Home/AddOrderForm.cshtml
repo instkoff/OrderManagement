@@ -1,0 +1,57 @@
+﻿@model OrderModel
+<h2>Создать заказ:</h2>
+
+<h4>Заказ:</h4>
+<form asp-action="Create" asp-controller="Order" id="form">
+    <div class="form-row">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-group col-md-6">
+            <label asp-for="Name">Название заказа:</label>
+            <input asp-for="Name" class="form-control" placeholder="Введите название заказа">
+            <span asp-validation-for="Name" class="text-danger"></span>
+
+        </div>
+        <div class="form-group col-md-6">
+            <label asp-for="Date">Дата:</label>
+            <input asp-for="Date" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-ddThh:mm")" placeholder="Дата зааказа">
+            <span asp-validation-for="Date" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="Provider.Id">Поставщик:</label>
+        <select asp-for="Provider.Id" asp-items="ViewBag.Providers" class="form-control"></select>
+    </div>
+    <div id="orderItemContainer">
+        @Html.EditorFor(model=>model.OrderItems)
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <input class="btn btn-light" type="button" id="btnAdd" value="Добавить"/>
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+</form>
+<div>
+    <a asp-action="Index">Назад к списку заказов</a>
+</div>
+
+@section Scripts
+{
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script type="text/javascript">
+        let urlToAddItem = "@Url.Action("AddOrderItem","Order")";
+        $("#btnAdd").on('click', function () {
+                $.ajax({
+                    async: true,
+                    data: $('#form').serialize(),
+                    type: "POST",
+                    url: '/Order/add-order-item',
+                    success: function (partialView) {
+                        console.log("partialView: "+partialView);
+                        $('#orderItemsContainer').html(partialView);
+                    }
+                });
+            });
+    </script>
+}

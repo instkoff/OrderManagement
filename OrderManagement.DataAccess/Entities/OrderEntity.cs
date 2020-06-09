@@ -9,6 +9,9 @@ namespace OrderManagement.DataAccess.Entities
         public string Name { get; set; }
         [Column(TypeName = "datetime2(7)")]
         public DateTime Date { get; set; } = DateTime.Now;
+
+        public int ProviderId { get; set; }
+        [ForeignKey("ProviderId")]
         public ProviderEntity Provider { get; set; }
         public ICollection<OrderItemEntity> OrderItems { get; set; }
     }

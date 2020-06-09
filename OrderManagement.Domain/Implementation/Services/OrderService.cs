@@ -24,7 +24,7 @@ namespace OrderManagement.Domain.Implementation.Services
         public async Task<int> Create(OrderModel orderModel)
         {
             var orderEntity = _mapper.Map<OrderEntity>(orderModel);
-            var providerCheck = await _dbRepository.Get<ProviderEntity>(p => p.Name == orderModel.Provider.Name)
+            var providerCheck = await _dbRepository.Get<ProviderEntity>(p => p.Id == orderModel.Provider.Id)
                 .FirstOrDefaultAsync();
             if (providerCheck != null)
             {
@@ -65,8 +65,6 @@ namespace OrderManagement.Domain.Implementation.Services
 
         public async Task Delete(int id)
         {
-            //var itemsCollection = await _dbRepository.Get<OrderItemEntity>(oi => oi.OrderEntityId == id).ToListAsync();
-            //await _dbRepository.RemoveRange(itemsCollection);
             await _dbRepository.RemoveAsync<OrderEntity>(id);
             await _dbRepository.SaveChangesAsync();
         }

@@ -14,7 +14,13 @@ namespace OrderManagement.Domain.Contracts.Models
         public string Name { get; set; }
         [Required(ErrorMessage = "Укажите дату")]
         public DateTime Date { get; set; }
+
         public ProviderModel Provider { get; set; }
         public List<OrderItemModel> OrderItems { get; set; }
+
+        public OrderModel()
+        {
+            OrderItems = new List<OrderItemModel>();
+        }
     }
 }

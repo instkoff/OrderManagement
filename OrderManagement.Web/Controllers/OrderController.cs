@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -18,7 +19,7 @@ namespace OrderManagement.Web.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<ActionResult<int>> Create([FromBody] OrderModel order)
+        public async Task<ActionResult<int>> Create([Bind("Name,Date,ProviderId,OrderItems")] OrderModel order)
         {
             if (!ModelState.IsValid)
                 throw new ValidationException("Form validation error");
@@ -28,7 +29,14 @@ namespace OrderManagement.Web.Controllers
                 return BadRequest();
             }
 
-            return Ok(result);
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpPost("add-order-item")]
+        public ActionResult AddOrderItem([Bind("OrderItems")] OrderModel order)
+        {
+            order.OrderItems.Add(new OrderItemModel());
+            return PartialView("_OrderItems", order);
         }
 
         [HttpGet]
