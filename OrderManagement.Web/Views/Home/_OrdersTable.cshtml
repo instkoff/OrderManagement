@@ -14,7 +14,7 @@
     <tbody>
     @foreach (var order in Model)
     {
-        <tr>
+        <tr onclick="location.href ='@Url.Action("GetOrder", "Order", new {id = order.Id})' ">
             <th scope="row">@i</th>
             <td>@order.Name</td>
             <td>@order.Date.ToString("G")</td>

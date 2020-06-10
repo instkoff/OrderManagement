@@ -19,8 +19,8 @@ namespace OrderManagement.Web.Controllers
             _orderService = orderService;
         }
 
-        [HttpPost("create")]
-        public async Task<ActionResult<int>> Create([FromForm][Bind("Name,Date,Provider,OrderItems")] OrderModel order)
+        [HttpPost("Create")]
+        public async Task<ActionResult> Create([FromBody] OrderModel order)
         {
             if (!ModelState.IsValid)
                 throw new ValidationException("Form validation error");
@@ -31,22 +31,6 @@ namespace OrderManagement.Web.Controllers
             }
 
             return RedirectToAction("Index", "Home");
-        }
-        [HttpGet("add-order-form")]
-        public ActionResult AddOrderForm()
-        {
-            var providers = _orderService.GetAllProviders();
-            ViewBag.Providers = new SelectList(providers, "Id", "Name");
-            var orderModel = new OrderModel();
-            orderModel.OrderItems.Add(new OrderItemModel());
-            return View(orderModel);
-        }
-
-        [HttpPost("add-order-item")]
-        public ActionResult AddOrderItem([FromForm] OrderModel order)
-        {
-            order.OrderItems.Add(new OrderItemModel());
-            return PartialView("_OrderItems", order);
         }
 
         [HttpGet]
@@ -59,12 +43,12 @@ namespace OrderManagement.Web.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<OrderModel>> GetOrder(int id)
+        public async Task<ActionResult> GetOrder(int id)
         {
             var order = await _orderService.Get(id);
             if (order == null)
                 return NotFound("Order was not found");
-            return Ok(order);
+            return View("OrderDetailsForm", order);
 
         }
 
@@ -77,12 +61,32 @@ namespace OrderManagement.Web.Controllers
             return Ok(result);
         }
 
-        [HttpDelete("id")]
-        public async Task<IActionResult> DeleteOrder(int id)
+        [HttpPost("Delete")]
+        public async Task<ActionResult> DeleteOrder(int id)
         {
             await _orderService.Delete(id);
-            return Ok();
+            return RedirectToAction("Index","Home");
+        }
 
+        [HttpGet("add-order")]
+        public ActionResult AddOrderForm()
+        {
+            var providers = _orderService.GetAllProviders();
+            ViewBag.Providers = new SelectList(providers, "Id", "Name");
+            var orderModel = new OrderModel();
+            orderModel.OrderItems.Add(new OrderItemModel());
+            return View(orderModel);
+        }
+
+        [HttpGet("Edit/{id}")]
+        public async Task<IActionResult> ShowEditOrderForm(int id)
+        {
+            var order = await _orderService.Get(id);
+            var providers = _orderService.GetAllProviders();
+            ViewBag.Providers = new SelectList(providers, "Id", "Name");
+            if (order == null)
+                return NotFound("Заказ не найден");
+            return View("EditOrderForm", order);
         }
     }
 }

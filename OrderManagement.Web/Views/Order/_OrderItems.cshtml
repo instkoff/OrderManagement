@@ -1,2 +1,25 @@
-﻿@model OrderModel
-@Html.EditorFor(model=>model.OrderItems)
+﻿@*@model OrderModel
+    @Html.EditorFor(model=>model.OrderItems)*@
+@model OrderItemModel
+<div class="col-md-4">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="form-group">
+        <label asp-for="ItemName"></label>
+        <input asp-for="ItemName" class="form-control" />
+        <span asp-validation-for="ItemName" class="text-danger"></span>
+    </div>
+</div>
+<div class="col-md-4">
+    <div class="form-group">
+        <label asp-for="Quantity"></label>
+        <input asp-for="Quantity" class="form-control" />
+        <span asp-validation-for="Quantity" class="text-danger"></span>
+    </div>
+</div>
+<div class="col-md-4">
+    <div class="form-group">
+        <label asp-for="Unit"></label>
+        <input asp-for="Unit" class="form-control" />
+        <span asp-validation-for="Unit" class="text-danger"></span>
+    </div>
+</div>
