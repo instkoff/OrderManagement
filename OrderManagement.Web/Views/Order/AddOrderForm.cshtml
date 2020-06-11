@@ -56,12 +56,16 @@
         let orderItemList = [];
         let count = 1;
         $("#btnAddItem").on("click",
-            function() {
-                let item = AddItemToTable($("#ItemName").val(), $("#Quantity").val(), $("#Unit").val(), count);
+            function () {
+                let qty = Number($("#Quantity").val().replace(',', '.'));
+                let item = AddItemToTable($("#ItemName").val(), qty, $("#Unit").val(), count);
                 orderItemList.push(item.orderItem);
                 $("#orderItemsTable").append(item.rowString);
                 count++;
                 console.log(orderItemList);
+                $("#ItemName").val('');
+                $("#Quantity").val('');
+                $("#Unit").val('');
             });
         form.on("submit",
             function(e) {

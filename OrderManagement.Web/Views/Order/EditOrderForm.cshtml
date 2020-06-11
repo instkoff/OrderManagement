@@ -1,4 +1,7 @@
 ﻿@model OrderModel
+@{
+    var count = 1;
+}
 <h2>Исправить заказ:</h2>
 
 <h4>@Model.Name</h4>
@@ -21,28 +24,39 @@
         <label asp-for="Provider.Id">Поставщик:</label>
         <select asp-for="Provider.Id" asp-items="ViewBag.Providers" class="form-control"></select>
     </div>
-    <div id="orderItemContainer">
-        <div class="row">
-            @{ await Html.RenderPartialAsync("_OrderItems", new OrderItemModel()); }
-            <input class="btn btn-info" type="button" id="btnAddItem" value="Добавить" />
-            <table class="table table-hover" id="orderItemsTable">
-                <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Название:</th>
-                        <th scope="col">Количество:</th>
-                        <th scope="col">Unit</th>
-                    </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
-
-
-        </div>
-    </div>
     <button type="submit" class="btn btn-primary" id="btnSaveOrder">Сохранить</button>
 </form>
+    <div id="orderItemContainer">
+        <div class="row">
+            <div id="orderItemForm">
+                @{ await Html.RenderPartialAsync("_OrderItems", new OrderItemModel()); }
+            </div>
+            <input class="btn btn-info" type="button" id="btnAddItem" value="Добавить"/>
+            <table class="table table-hover" id="orderItemsTable">
+                <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Название:</th>
+                    <th scope="col">Количество:</th>
+                    <th scope="col">Unit</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var orderItem in Model.OrderItems)
+                {
+                    <tr onclick="LoadItemToForm()">
+                        <th scope="row">@count</th>
+                        <td hidden>@orderItem.Id</td>
+                        <td>@orderItem.ItemName</td>
+                        <td>@orderItem.Quantity</td>
+                        <td>@orderItem.Unit</td>
+                    </tr>
+                    count++;
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
 <div>
     <a asp-action="Index" asp-controller="Home">Назад к списку заказов</a>
 </div>
@@ -54,35 +68,48 @@
     <script type="text/javascript">
         let form = $("#orderForm");
         let orderItemList = [];
-        let count = 1;
-        let orderItem = {};
-        @foreach (var item in @Model.OrderItems)
-        {
-            <text>
-                orderItem = {
-                    id: 0,
-                    itemName: '@item.ItemName',
-                    quantity: '@item.Quantity',
-                    unit: '@item.Unit'
-                };
-                orderItemList.push(orderItem);
-                $("#orderItemsTable").append('<tr><th scope="row">' + count + '</th><td>' + orderItem.itemName + '</td><td>' + orderItem.quantity + '</td><td>' + orderItem.unit + '</td></tr>');
-                count++;
-            </text>
+
+        function LoadItemToForm() {
+            $("#orderItemForm").load("@Url.Action("")")
         }
-        console.log(orderItemList);
+
+        $("#orderItemsTable tbody tr").each(function (index, element) { 
+
+            let tds = $(this).find('td');
+            let idClmn = tds.eq(0);
+            let nameClmn = tds.eq(1);
+            let quantityClmn = tds.eq(2);
+            let unitClmn = tds.eq(3);
+            let orderItem = {};
+
+            orderItem.id = idClmn.text();
+            orderItem.itemName = nameClmn.text();
+            orderItem.quantity = Number(quantityClmn.text().replace(',','.'));
+            orderItem.unit = unitClmn.text();
+
+            orderItemList.push(orderItem);
+            console.log(orderItemList);
+        });
+        let count = orderItemList.length+1;
         $("#btnAddItem").on("click",
-            function() {
-                let item = AddItemToTable($("#ItemName").val(), $("#Quantity").val(), $("#Unit").val(), count);
+            function () {
+                let qty = Number($("#Quantity").val().replace(',', '.'));
+                let item = AddItemToTable($("#ItemName").val(), qty, $("#Unit").val(), count);
                 orderItemList.push(item.orderItem);
                 $("#orderItemsTable").append(item.rowString);
                 count++;
                 console.log(orderItemList);
+                $("#ItemName").val('');
+                $("#Quantity").val('');
+                $("#Unit").val('');
             });
+
+
         form.on("submit",
             function(e) {
                 e.preventDefault();
                 let order = JSON.stringify({
+                    id: "@Model.Id",
                     name: $("#Name").val(),
                     date: $("#Date").val(),
                     provider: {
@@ -107,5 +134,6 @@
                     });
                 }
             });
+
     </script>
 }
