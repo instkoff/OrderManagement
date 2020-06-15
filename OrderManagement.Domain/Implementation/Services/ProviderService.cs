@@ -39,6 +39,10 @@ namespace OrderManagement.Domain.Implementation.Services
         public List<ProviderModel> GetAll()
         {
             var providerCollection = _dbRepository.GetAll<ProviderEntity>();
+            if (!providerCollection.Any())
+            {
+                return null;
+            }
             var providerModels = _mapper.Map<List<ProviderModel>>(providerCollection);
             return providerModels;
         }

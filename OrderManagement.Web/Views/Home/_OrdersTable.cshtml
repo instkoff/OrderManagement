@@ -12,15 +12,19 @@
     </tr>
     </thead>
     <tbody>
-    @foreach (var order in Model)
+    @if (Model.Any())
     {
-        <tr onclick="location.href ='@Url.Action("GetOrder", "Order", new {id = order.Id})' ">
-            <th scope="row">@i</th>
-            <td>@order.Name</td>
-            <td>@order.Date.ToString("G")</td>
-            <td>@order.Provider.Name</td>
-        </tr>
-        i++;
+        @foreach (var order in Model)
+        {
+            <tr onclick="location.href = '@Url.Action("GetOrder", "Order", new {id = order.Id})' ">
+                <th scope="row">@i</th>
+                <td>@order.Name</td>
+                <td>@order.Date.ToString("G")</td>
+                <td>@order.Provider.Name</td>
+            </tr>
+            i++;
+        }
     }
+
     </tbody>
 </table>

@@ -13,12 +13,12 @@ namespace OrderManagement.Web.Controllers
     public class HomeController : BaseController
     {
         private readonly IOrderService _orderService;
-        private readonly IProviderService _providerService;
+        private readonly IOrderItemService _orderItemService;
 
-        public HomeController(IOrderService orderService, IProviderService providerService)
+        public HomeController(IOrderService orderService, IOrderItemService orderItemService)
         {
             _orderService = orderService;
-            _providerService = providerService;
+            _orderItemService = orderItemService;
         }
 
         /// <summary>
@@ -47,16 +47,23 @@ namespace OrderManagement.Web.Controllers
             var ordersCollection = _orderService.GetAll();
             //ToDo Сделать партиал с ошибкой
             var orderNames = ordersCollection.Select(o => o.Name).Distinct();
-            ViewBag.OrderNames = new SelectList(orderNames);
             var orderDates = ordersCollection.Select(o => o.Date).Distinct();
-            ViewBag.OrderDates = new SelectList(orderDates);
             var orderOrderProviderId = ordersCollection.Select(o => o.Provider.Id);
-            ViewBag.OrderProviderId = new SelectList(orderDates);
+            var orderItems = _orderItemService.GetAllDistinct();
+            var orderItemNames = orderItems.Select(i => i.ItemName);
+            var orderItemUnits = orderItems.Select(i => i.Unit);
+            var orderProviderNames = ordersCollection.Select(o => o.Provider.Name);
+            ViewBag.OrderNames = new SelectList(orderNames);
+            ViewBag.OrderDates = new SelectList(orderDates);
+            ViewBag.OrderProviderIds = new SelectList(orderOrderProviderId);
+            ViewBag.OrderItemNames = new SelectList(orderItemNames);
+            ViewBag.OrderItemUnits = new SelectList(orderItemUnits);
+            ViewBag.OrderProviderNames = new SelectList(orderProviderNames);
             return PartialView("_FilterForm", new FilterModel());
         }
 
         [HttpPost]
-        public PartialViewResult AcceptFilter(FilterModel filter)
+        public PartialViewResult AcceptFilter([FromForm]FilterModel filter)
         {
 
             return PartialView("_OrdersTable");
