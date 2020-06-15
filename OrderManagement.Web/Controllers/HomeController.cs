@@ -41,6 +41,25 @@ namespace OrderManagement.Web.Controllers
             return PartialView("_OrdersTable", ordersCollection);
         }
 
+        [HttpGet("filter-form")]
+        public PartialViewResult ShowFilterForm()
+        {
+            var ordersCollection = _orderService.GetAll();
+            //ToDo Сделать партиал с ошибкой
+            var orderNames = ordersCollection.Select(o => o.Name).Distinct();
+            ViewBag.OrderNames = new SelectList(orderNames);
+            var orderDates = ordersCollection.Select(o => o.Date).Distinct();
+            ViewBag.OrderDates = new SelectList(orderDates);
+            var orderOrderProviderId = ordersCollection.Select(o => o.Provider.Id);
+            ViewBag.OrderProviderId = new SelectList(orderDates);
+            return PartialView("_FilterForm", new FilterModel());
+        }
 
+        [HttpPost]
+        public PartialViewResult AcceptFilter(FilterModel filter)
+        {
+
+            return PartialView("_OrdersTable");
+        }
     }
 }

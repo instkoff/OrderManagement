@@ -2,6 +2,9 @@
     <div class="container">
         <a class="btn btn-success" asp-action="AddOrderForm" asp-controller="Order">Добавить заказ</a>
     </div>
+    <div class="container" id="filterForm">
+
+    </div>
     <div class="container" id="ordersTable">
         ...Loading
     </div>
@@ -13,13 +16,16 @@
         let appSettings = {
             Urls: {
                 getOrders: "@Url.Action("ShowOrdersTable", "Home")",
-                addOrder: "@Url.Action("AddOrderForm", "Order")"
+                addOrder: "@Url.Action("AddOrderForm", "Order")",
+                filterForm: "@Url.Action("ShowFilterForm", "Home")"
             },
             ordersTableContainer: "#ordersTable"
         };
 
         $(document).ready(function() {
             $(appSettings.ordersTableContainer).load(appSettings.Urls.getOrders);
+            $("#filterForm").load(appSettings.Urls.filterForm);
+
         });
     </script>
 }
