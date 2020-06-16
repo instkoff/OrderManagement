@@ -1,19 +1,20 @@
-﻿using OrderManagement.Domain.Contracts;
+﻿using System;
+using System.Linq.Expressions;
+using OrderManagement.DataAccess;
+using OrderManagement.DataAccess.Entities;
+using OrderManagement.Domain.Contracts;
 using OrderManagement.Domain.Contracts.Models;
 
 namespace OrderManagement.Domain.Implementation.Specifications
 {
-    public class OrderNameSpecification : IOrderSpecification
+    public class OrderNameSpecification : ISpecification<OrderEntity>
     {
-        private readonly FilterModel _filterModel;
-
         public OrderNameSpecification(FilterModel filterModel)
         {
-            _filterModel = filterModel;
+            IsSatisfiedBy = o => o.Name.Equals(filterModel.OrderItemName);
+
         }
-        public bool IsSatisfiedBy(OrderModel order)
-        {
-            return order.Name.Equals(_filterModel.OrderName);
-        }
+
+        public Expression<Func<OrderEntity, bool>> IsSatisfiedBy { get; }
     }
 }

@@ -7,6 +7,7 @@ using OrderManagement.DataAccess;
 using OrderManagement.DataAccess.Entities;
 using OrderManagement.Domain.Contracts;
 using OrderManagement.Domain.Contracts.Models;
+using OrderManagement.Domain.Implementation.Specifications;
 
 namespace OrderManagement.Domain.Implementation.Services
 {
@@ -43,6 +44,15 @@ namespace OrderManagement.Domain.Implementation.Services
                 .ToList();
             var orderModels = _mapper.Map<List<OrderModel>>(orderCollection);
             return orderModels;
+        }
+
+        public List<OrderModel> GetFilteredOrders(FilterModel filter)
+        {
+            if (!string.IsNullOrEmpty(filter.OrderName))
+            {
+                var orders = _dbRepository.Get<OrderEntity>(new OrderNameSpecification(filter));
+            }
+
         }
         public List<ProviderModel> GetAllProviders()
         {

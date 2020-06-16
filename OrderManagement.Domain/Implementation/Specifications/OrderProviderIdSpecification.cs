@@ -1,4 +1,5 @@
-﻿using OrderManagement.Domain.Contracts;
+﻿using OrderManagement.DataAccess.Entities;
+using OrderManagement.Domain.Contracts;
 using OrderManagement.Domain.Contracts.Models;
 
 namespace OrderManagement.Domain.Implementation.Specifications
@@ -11,7 +12,7 @@ namespace OrderManagement.Domain.Implementation.Specifications
         {
             _filterModel = filterModel;
         }
-        public bool IsSatisfiedBy(OrderModel order)
+        public bool IsSatisfiedBy(OrderEntity order)
         {
             return order.Provider.Id.Equals(_filterModel.OrderProviderId);
         }

@@ -1,9 +1,10 @@
-﻿using OrderManagement.Domain.Contracts.Models;
+﻿using OrderManagement.DataAccess.Entities;
+using OrderManagement.Domain.Contracts.Models;
 
 namespace OrderManagement.Domain.Contracts
 {
     public interface IOrderSpecification
     {
-        bool IsSatisfiedBy(OrderModel order);
+        bool IsSatisfiedBy(OrderEntity order);
     }
 }

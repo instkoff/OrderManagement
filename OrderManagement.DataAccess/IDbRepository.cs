@@ -25,6 +25,8 @@ namespace OrderManagement.DataAccess
         /// <param name="selector">Условие</param>
         /// <returns></returns>
         IQueryable<T> Get<T>(Expression<Func<T, bool>> selector) where T : class, IEntity;
+
+        IQueryable<T> Get<T>(ISpecification<T> specification) where T : class, IEntity;
         /// <summary>
         /// Добавление обекта в БД
         /// </summary>
