@@ -2,20 +2,16 @@
 using OrderManagement.DataAccess.Entities;
 using OrderManagement.Domain.Contracts;
 using OrderManagement.Domain.Contracts.Models;
+using OrderManagement.Domain.Contracts.Services;
+using OrderManagement.Domain.Contracts.Specifications;
 
 namespace OrderManagement.Domain.Implementation.Specifications
 {
-    public class OrderItemNameSpecification : IOrderSpecification
+    public class OrderItemNameSpecification : BaseSpecification<OrderEntity>
     {
-        private readonly FilterModel _filterModel;
-
-        public OrderItemNameSpecification(FilterModel filterModel)
+        public OrderItemNameSpecification(string itemName)
         {
-            _filterModel = filterModel;
-        }
-        public bool IsSatisfiedBy(OrderEntity order)
-        {
-            return order.OrderItems.Any(orderItem => orderItem.Name.Equals(_filterModel.OrderItemName));
+            Criteria = o => o.OrderItems.Any(i => i.Name.Equals(itemName));
         }
     }
 }

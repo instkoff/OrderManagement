@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using OrderManagement.Domain.Contracts;
 using OrderManagement.Domain.Contracts.Exceptions;
 using OrderManagement.Domain.Contracts.Models;
+using OrderManagement.Domain.Contracts.Services;
 
 namespace OrderManagement.Web.Controllers
 {

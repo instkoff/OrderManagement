@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -7,6 +8,8 @@ using OrderManagement.DataAccess;
 using OrderManagement.DataAccess.Entities;
 using OrderManagement.Domain.Contracts;
 using OrderManagement.Domain.Contracts.Models;
+using OrderManagement.Domain.Contracts.Services;
+using OrderManagement.Domain.Contracts.Specifications;
 using OrderManagement.Domain.Implementation.Specifications;
 
 namespace OrderManagement.Domain.Implementation.Services
@@ -39,7 +42,6 @@ namespace OrderManagement.Domain.Implementation.Services
         public List<OrderModel> GetAll()
         {
             var orderCollection = _dbRepository.GetAll<OrderEntity>()
-                .Include(oi => oi.OrderItems)
                 .Include(p=>p.Provider)
                 .ToList();
             var orderModels = _mapper.Map<List<OrderModel>>(orderCollection);
@@ -48,12 +50,39 @@ namespace OrderManagement.Domain.Implementation.Services
 
         public List<OrderModel> GetFilteredOrders(FilterModel filter)
         {
+            var queryCollection = _dbRepository.GetAll<OrderEntity>();
             if (!string.IsNullOrEmpty(filter.OrderName))
             {
-                var orders = _dbRepository.Get<OrderEntity>(new OrderNameSpecification(filter));
+                queryCollection = queryCollection.Specify(new OrderNameSpecification(filter.OrderName));
+            }
+            if (filter.OrderDate != null)
+            {
+                queryCollection = queryCollection.Specify(new OrderDateSpecification(filter.OrderDate));
+            }
+            if (!string.IsNullOrEmpty(filter.OrderItemName))
+            {
+                queryCollection = queryCollection.Specify(new OrderItemNameSpecification(filter.OrderItemName));
+            }
+            if (!string.IsNullOrEmpty(filter.OrderProviderName))
+            {
+                queryCollection = queryCollection.Specify(new OrderProviderSpecification(filter.OrderProviderName));
+            }
+            if (!string.IsNullOrEmpty(filter.OrderItemUnit))
+            {
+                queryCollection = queryCollection.Specify(new OrderItemUnitSpecification(filter.OrderItemUnit));
+            }
+            if (filter.OrderProviderId != 0)
+            {
+                queryCollection = queryCollection.Specify(new OrderProviderIdSpecification(filter.OrderProviderId));
             }
 
+            var filteredOrders = queryCollection.Include(p=>p.Provider).ToList();
+            var orderModels = _mapper.Map<List<OrderModel>>(filteredOrders);
+            return orderModels;
         }
+
+        //ToDo Сделать выборку значений для фильтра
+
         public List<ProviderModel> GetAllProviders()
         {
             var providerCollection = _dbRepository.GetAll<ProviderEntity>();

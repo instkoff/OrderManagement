@@ -1,48 +1,49 @@
 ﻿@model OrderModel
-<h2>Создать заказ:</h2>
-
-<h4>Заказ:</h4>
-<form asp-action="Create" asp-controller="Order" id="orderForm">
-    <div class="form-row">
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        <div class="form-group col-md-5">
-            <label asp-for="Name">Название заказа:</label>
-            <input asp-for="Name" class="form-control" required placeholder="Введите название заказа">
-            <span asp-validation-for="Name" class="text-danger"></span>
-
+    <form asp-action="Create" asp-controller="Order" id="orderForm">
+        <div class="form-row">
+            <div class="form-group col-md-5">
+                <button type="submit" class="btn btn-primary" id="btnSaveOrder">Сохранить</button>
+            </div>
         </div>
-        <div class="form-group col-md-5">
-            <label asp-for="Date">Дата:</label>
-            <input asp-for="Date" class="form-control" required value="@DateTime.Now.ToString("yyyy-MM-ddThh:mm:ss")" placeholder="Дата заказа">
-            <span asp-validation-for="Date" class="text-danger"></span>
+        <h2>Создать заказ:</h2>
+        <h4>Заказ:</h4>
+        <div class="form-row">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group col-md-5">
+                <label asp-for="Name">Название заказа:</label>
+                <input asp-for="Name" class="form-control" required placeholder="Введите название заказа">
+                <span asp-validation-for="Name" class="text-danger"></span>
+
+            </div>
+            <div class="form-group col-md-5">
+                <label asp-for="Date">Дата:</label>
+                <input asp-for="Date" class="form-control" required value="@DateTime.Now.ToString("yyyy-MM-ddThh:mm:ss")" placeholder="Дата заказа">
+                <span asp-validation-for="Date" class="text-danger"></span>
+            </div>
         </div>
-    </div>
-    <div class="form-group">
-        <label asp-for="Provider.Id">Поставщик:</label>
-        <select asp-for="Provider.Id" asp-items="ViewBag.Providers" class="form-control"></select>
-    </div>
+        <div class="form-group">
+            <label asp-for="Provider.Id">Поставщик:</label>
+            <select asp-for="Provider.Id" asp-items="ViewBag.Providers" class="form-control"></select>
+        </div>
+    </form>
     <div id="orderItemContainer">
         <div class="row">
             @{ await Html.RenderPartialAsync("_OrderItems", new OrderItemModel()); }
             <input class="btn btn-info" type="button" id="btnAddItem" value="Добавить" />
             <table class="table table-hover" id="orderItemsTable">
                 <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Название:</th>
-                        <th scope="col">Количество:</th>
-                        <th scope="col">Unit</th>
-                    </tr>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Название:</th>
+                    <th scope="col">Количество:</th>
+                    <th scope="col">Unit</th>
+                </tr>
                 </thead>
                 <tbody>
                 </tbody>
             </table>
-
-
         </div>
     </div>
-    <button type="submit" class="btn btn-primary" id="btnSaveOrder">Сохранить</button>
-</form>
 <div>
     <a asp-action="Index" asp-controller="Home">Назад к списку заказов</a>
 </div>

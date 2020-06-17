@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using OrderManagement.Domain.Contracts;
+using OrderManagement.Domain.Contracts.Services;
 using OrderManagement.Domain.Implementation.Profiles;
 using OrderManagement.Domain.Implementation.Services;
 

@@ -4,17 +4,16 @@ using OrderManagement.DataAccess;
 using OrderManagement.DataAccess.Entities;
 using OrderManagement.Domain.Contracts;
 using OrderManagement.Domain.Contracts.Models;
+using OrderManagement.Domain.Contracts.Specifications;
 
 namespace OrderManagement.Domain.Implementation.Specifications
 {
-    public class OrderNameSpecification : ISpecification<OrderEntity>
+    public class OrderNameSpecification : BaseSpecification<OrderEntity>
     {
-        public OrderNameSpecification(FilterModel filterModel)
+        public OrderNameSpecification(string orderName)
         {
-            IsSatisfiedBy = o => o.Name.Equals(filterModel.OrderItemName);
-
+            Criteria = i => i.Name.Equals(orderName);
         }
 
-        public Expression<Func<OrderEntity, bool>> IsSatisfiedBy { get; }
     }
 }

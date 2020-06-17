@@ -1,18 +1,14 @@
 ﻿using System;
-using System.Linq.Expressions;
-using OrderManagement.DataAccess;
 using OrderManagement.DataAccess.Entities;
-using OrderManagement.Domain.Contracts;
-using OrderManagement.Domain.Contracts.Models;
+using OrderManagement.Domain.Contracts.Specifications;
 
 namespace OrderManagement.Domain.Implementation.Specifications
 {
-    public class OrderDateSpecification : ISpecification<OrderEntity>
+    public class OrderDateSpecification : BaseSpecification<OrderEntity>
     {
-        public Expression<Func<OrderEntity, bool>> IsSatisfiedBy { get; }
-        public OrderDateSpecification(FilterModel filterModel)
+        public OrderDateSpecification(DateTime? orderDate)
         {
-            IsSatisfiedBy = o => o.Date.Equals(filterModel.OrderDate);
+            Criteria = i => i.Date.Equals(orderDate);
         }
     }
 }

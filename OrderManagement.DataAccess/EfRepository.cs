@@ -40,10 +40,6 @@ namespace OrderManagement.DataAccess
             return _context.Set<T>().Where(selector).AsQueryable();
         }
 
-        public IQueryable<T> Get<T>(ISpecification<T> specification) where T : class, IEntity
-        {
-            return _context.Set<T>().Where(specification.IsSatisfiedBy).AsQueryable();
-        }
         /// <summary>
         /// Добавление обекта в БД
         /// </summary>

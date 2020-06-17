@@ -9,6 +9,7 @@ using OrderManagement.DataAccess;
 using OrderManagement.DataAccess.Entities;
 using OrderManagement.Domain.Contracts;
 using OrderManagement.Domain.Contracts.Models;
+using OrderManagement.Domain.Contracts.Services;
 
 namespace OrderManagement.Domain.Implementation.Services
 {

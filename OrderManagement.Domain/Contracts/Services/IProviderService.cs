@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using OrderManagement.Domain.Contracts.Models;
 
-namespace OrderManagement.Domain.Contracts
+namespace OrderManagement.Domain.Contracts.Services
 {
     public interface IProviderService
     {

@@ -3,20 +3,16 @@ using System.Linq;
 using OrderManagement.DataAccess.Entities;
 using OrderManagement.Domain.Contracts;
 using OrderManagement.Domain.Contracts.Models;
+using OrderManagement.Domain.Contracts.Services;
+using OrderManagement.Domain.Contracts.Specifications;
 
 namespace OrderManagement.Domain.Implementation.Specifications
 {
-    public class OrderItemUnitSpecification : IOrderSpecification
+    public class OrderItemUnitSpecification : BaseSpecification<OrderEntity>
     {
-        private readonly FilterModel _filterModel;
-
-        public OrderItemUnitSpecification(FilterModel filterModel)
+        public OrderItemUnitSpecification(string unitName)
         {
-            _filterModel = filterModel;
-        }
-        public bool IsSatisfiedBy(OrderEntity order)
-        {
-            return order.OrderItems.Any(orderItem => orderItem.Unit.Equals(_filterModel.OrderItemUnit));
+            Criteria = o=>o.OrderItems.Any(orderItem => orderItem.Unit.Equals(unitName));
         }
     }
 }

@@ -1,9 +1,8 @@
-using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using OrderManagement.Domain.Contracts;
 using OrderManagement.Domain.Contracts.Models;
+using OrderManagement.Domain.Contracts.Services;
 
 namespace OrderManagement.Web.Controllers
 {
@@ -28,30 +27,13 @@ namespace OrderManagement.Web.Controllers
         [HttpGet]
         public ActionResult Index()
         {
-            return View();
-        }
-
-        [HttpGet("orders-table")]
-        public PartialViewResult ShowOrdersTable()
-        {
             var ordersCollection = _orderService.GetAll();
-            //ToDo Сделать партиал с ошибкой
-            if (ordersCollection == null || !ordersCollection.Any())
-                return null;
-            return PartialView("_OrdersTable", ordersCollection);
-        }
-
-        [HttpGet("filter-form")]
-        public PartialViewResult ShowFilterForm()
-        {
-            var ordersCollection = _orderService.GetAll();
-            //ToDo Сделать партиал с ошибкой
             var orderNames = ordersCollection.Select(o => o.Name).Distinct();
             var orderDates = ordersCollection.Select(o => o.Date).Distinct();
             var orderOrderProviderId = ordersCollection.Select(o => o.Provider.Id);
             var orderItems = _orderItemService.GetAllDistinct();
-            var orderItemNames = orderItems.Select(i => i.ItemName);
-            var orderItemUnits = orderItems.Select(i => i.Unit);
+            var orderItemNames = orderItems.Select(i => i.ItemName).Distinct();
+            var orderItemUnits = orderItems.Select(i => i.Unit).Distinct();
             var orderProviderNames = ordersCollection.Select(o => o.Provider.Name);
             ViewBag.OrderNames = new SelectList(orderNames);
             ViewBag.OrderDates = new SelectList(orderDates);
@@ -59,14 +41,23 @@ namespace OrderManagement.Web.Controllers
             ViewBag.OrderItemNames = new SelectList(orderItemNames);
             ViewBag.OrderItemUnits = new SelectList(orderItemUnits);
             ViewBag.OrderProviderNames = new SelectList(orderProviderNames);
-            return PartialView("_FilterForm", new FilterModel());
+            return View();
+        }
+
+        [HttpGet("orders-table")]
+        public IActionResult ShowOrdersTable()
+        {
+            var ordersCollection = _orderService.GetAll();
+            //ToDo Сделать партиал с ошибкой
+            return PartialView("_OrdersTable", ordersCollection);
         }
 
         [HttpPost]
-        public PartialViewResult AcceptFilter([FromForm]FilterModel filter)
+        public IActionResult AcceptFilter([FromForm]FilterModel filter)
         {
+            var ordersCollection = _orderService.GetFilteredOrders(filter);
 
-            return PartialView("_OrdersTable");
+            return PartialView("_OrdersTable", ordersCollection);
         }
     }
 }

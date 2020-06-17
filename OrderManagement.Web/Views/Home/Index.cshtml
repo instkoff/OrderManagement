@@ -1,9 +1,46 @@
-﻿<div class="container-fluid">
+﻿@model FilterModel
+<div class="container-fluid">
     <div class="container">
         <a class="btn btn-success" asp-action="AddOrderForm" asp-controller="Order">Добавить заказ</a>
     </div>
-    <div class="container" id="filterForm">
-
+    <div class="container" id="filterFormContainer">
+        <form asp-action="AcceptFilter" asp-controller="Home" id="filterForm">
+            <div class="form-row">
+                <div class="form-group col-md-4">
+                    <label asp-for="OrderName">Название заказа:</label>
+                    <select asp-for="OrderName" asp-items="ViewBag.OrderNames" class="form-control" multiple>
+                    </select>
+                </div>
+                <div class="form-group col-md-4">
+                    <label asp-for="OrderDate">Дата заказа:</label>
+                    <select asp-for="OrderDate" asp-items="ViewBag.OrderDates" class="form-control" multiple>
+                    </select>
+                </div>
+                <div class="form-group col-md-4">
+                    <label asp-for="OrderProviderId">Id Поставщика:</label>
+                    <select asp-for="OrderProviderId" asp-items="ViewBag.OrderProviderIds" class="form-control" multiple>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-4">
+                    <label asp-for="OrderItemName">Название товара:</label>
+                    <select asp-for="OrderItemName" asp-items="ViewBag.OrderItemNames" class="form-control" multiple>
+                    </select>
+                </div>
+                <div class="form-group col-md-4">
+                    <label asp-for="OrderItemUnit">Название товара:</label>
+                    <select asp-for="OrderItemUnit" asp-items="ViewBag.OrderItemUnits" class="form-control" multiple>
+                    </select>
+                </div>
+                <div class="form-group col-md-4">
+                    <label asp-for="OrderProviderName">Название товара:</label>
+                    <select asp-for="OrderProviderName" asp-items="ViewBag.OrderProviderNames" class="form-control" multiple>
+                    </select>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary" id="btnAcceptFilter">Применить</button>
+        </form>
     </div>
     <div class="container" id="ordersTable">
         ...Loading
@@ -15,17 +52,30 @@
     <script type="text/javascript">
         let appSettings = {
             Urls: {
-                getOrders: "@Url.Action("ShowOrdersTable", "Home")",
-                addOrder: "@Url.Action("AddOrderForm", "Order")",
-                filterForm: "@Url.Action("ShowFilterForm", "Home")"
-            },
-            ordersTableContainer: "#ordersTable"
+                getOrdersTable: "@Url.Action("ShowOrdersTable", "Home")",
+                getFilteredOrders: "@Url.Action("AcceptFilter", "Home")"
+            }
         };
-
-        $(document).ready(function() {
-            $(appSettings.ordersTableContainer).load(appSettings.Urls.getOrders);
-            $("#filterForm").load(appSettings.Urls.filterForm);
-
+        $(document).ready(() => {
+            $("#ordersTable").load(appSettings.Urls.getOrdersTable);
         });
+        $("#filterForm").on("submit",
+            (e) => {
+                e.preventDefault();
+                $.ajax({
+                    url: appSettings.Urls.getFilteredOrders,
+                    data: $("#filterForm").serialize(),
+                    type: "POST",
+                    success: function (result) {
+                        $("#ordersTable").html(result);
+                    },
+                    error: function (result) {
+                        console.log(result);
+                        alert("Ошибка");
+                    }
+                });
+            });
+
+
     </script>
 }
