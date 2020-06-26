@@ -25,22 +25,8 @@ namespace OrderManagement.Web.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public ActionResult Index()
+        public IActionResult Index()
         {
-            var ordersCollection = _orderService.GetAll();
-            var orderNames = ordersCollection.Select(o => o.Name).Distinct();
-            var orderDates = ordersCollection.Select(o => o.Date).Distinct();
-            var orderOrderProviderId = ordersCollection.Select(o => o.Provider.Id);
-            var orderItems = _orderItemService.GetAllDistinct();
-            var orderItemNames = orderItems.Select(i => i.ItemName).Distinct();
-            var orderItemUnits = orderItems.Select(i => i.Unit).Distinct();
-            var orderProviderNames = ordersCollection.Select(o => o.Provider.Name);
-            ViewBag.OrderNames = new SelectList(orderNames);
-            ViewBag.OrderDates = new SelectList(orderDates);
-            ViewBag.OrderProviderIds = new SelectList(orderOrderProviderId);
-            ViewBag.OrderItemNames = new SelectList(orderItemNames);
-            ViewBag.OrderItemUnits = new SelectList(orderItemUnits);
-            ViewBag.OrderProviderNames = new SelectList(orderProviderNames);
             return View();
         }
 

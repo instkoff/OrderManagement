@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using OrderManagement.Domain.Contracts;
 using OrderManagement.Domain.Contracts.Exceptions;
 using OrderManagement.Domain.Contracts.Models;
 using OrderManagement.Domain.Contracts.Services;
@@ -72,8 +70,8 @@ namespace OrderManagement.Web.Controllers
         [HttpGet("add-order")]
         public ActionResult AddOrderForm()
         {
-            var providers = _orderService.GetAllProviders();
-            ViewBag.Providers = new SelectList(providers, "Id", "Name");
+            //var providers = _orderService.GetAllProviders();
+            //ViewBag.Providers = new SelectList(providers, "Id", "Name", providers[0]);
             var orderModel = new OrderModel();
             orderModel.OrderItems.Add(new OrderItemModel());
             return View(orderModel);
@@ -88,6 +86,19 @@ namespace OrderManagement.Web.Controllers
             if (order == null)
                 return NotFound("Заказ не найден");
             return View("EditOrderForm", order);
+        }
+
+        [HttpGet("OrderDetails")]
+        public ActionResult<List<OrderItemModel>> GetOrderDetails(int orderId)
+        {
+            var orderDetails = _orderService.GetOrderItems(orderId);
+            return orderDetails;
+        }
+        [HttpGet("GetProviders")]
+        public ActionResult<List<ProviderModel>> GetAllProviders()
+        {
+            var providers = _orderService.GetAllProviders();
+            return providers;
         }
     }
 }

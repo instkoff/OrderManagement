@@ -1,49 +1,77 @@
 ﻿@model OrderModel
-    <form asp-action="Create" asp-controller="Order" id="orderForm">
-        <div class="form-row">
-            <div class="form-group col-md-5">
-                <button type="submit" class="btn btn-primary" id="btnSaveOrder">Сохранить</button>
-            </div>
-        </div>
-        <h2>Создать заказ:</h2>
-        <h4>Заказ:</h4>
-        <div class="form-row">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group col-md-5">
-                <label asp-for="Name">Название заказа:</label>
-                <input asp-for="Name" class="form-control" required placeholder="Введите название заказа">
-                <span asp-validation-for="Name" class="text-danger"></span>
+<h3>Добавить заказ:</h3>
+@using (Html.BeginForm("Create", "Order", FormMethod.Post, new {id = "addOrderForm"}))
+{
+    @(Html.DevExtreme().Form<OrderModel>()
+        .ID("add-order-form")
+        .ValidationGroup("Order")
+        .ColCount(2)
+        .Items(items =>
+        {
+            items.AddGroup().Caption("Детали заказа:").Items(groupItems =>
+            {
+                groupItems.AddSimpleFor(m => m.Name)
+                    .Name("OrderName")
+                    .Editor(e => e.TextBox());
+                groupItems.AddSimpleFor(m => m.Date)
+                    .Name("OrderDate")
+                    .Editor(e => e.DateBox()
+                        .DisplayFormat("dd.MM.yyyy hh:mm:ss")
+                        .Type(DateBoxType.DateTime)
+                        .Value(DateTime.Now));
+                groupItems.AddSimpleFor(m => m.Provider.Id)
+                    .Name("OrderProvider")
+                    .Editor(e => e.SelectBox()
+                        .DataSource(d => d.Mvc()
+                            .Controller("Order")
+                            .LoadAction("GetAllProviders")
+                            .Key("Id"))
+                        .DisplayExpr("Name")
+                        .ValueExpr("Id")
+                        .Value(1)
+                        .SearchEnabled(true));
+                groupItems.AddGroup().Caption("Товары")
+                    .Items(orderItemsGroup =>
+                    {
+                        orderItemsGroup.AddSimpleFor(m => m.OrderItems)
+                            .Template(@<text>
+                                    @(Html.DevExtreme().DataGrid<OrderItemModel>()
+                                        .ID("OrderItems")
+                                        .Height(500)
+                                        .ShowBorders(true)
+                                        .Editing(s=>s.AllowAdding(true).AllowDeleting(true).AllowUpdating(true))
+                                        .DataSource(new JS("[]"))
+                                        .Columns(
+                                        c =>
+                                        {
+                                            c.AddFor(m=>m.ItemName).Caption("Название товара");
+                                            c.AddFor(m => m.Quantity).Caption("Количество");
+                                            c.AddFor(m => m.Unit).Caption("Единицы");
+                                        })    
+                                        .Paging(p => p.PageSize(10))
+                                        .FilterRow(f => f.Visible(true))
+                                        .HeaderFilter(f => f.Visible(true))
+                                        .RemoteOperations(false))
 
-            </div>
-            <div class="form-group col-md-5">
-                <label asp-for="Date">Дата:</label>
-                <input asp-for="Date" class="form-control" required value="@DateTime.Now.ToString("yyyy-MM-ddThh:mm:ss")" placeholder="Дата заказа">
-                <span asp-validation-for="Date" class="text-danger"></span>
-            </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="Provider.Id">Поставщик:</label>
-            <select asp-for="Provider.Id" asp-items="ViewBag.Providers" class="form-control"></select>
-        </div>
-    </form>
-    <div id="orderItemContainer">
-        <div class="row">
-            @{ await Html.RenderPartialAsync("_OrderItems", new OrderItemModel()); }
-            <input class="btn btn-info" type="button" id="btnAddItem" value="Добавить" />
-            <table class="table table-hover" id="orderItemsTable">
-                <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Название:</th>
-                    <th scope="col">Количество:</th>
-                    <th scope="col">Unit</th>
-                </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
-        </div>
-    </div>
+                                   </text>).Label(l=>l.Visible(false));
+                });
+            });
+
+        })
+        .LabelLocation(FormLabelLocation.Left)
+        .MinColWidth(150)
+        .ReadOnly(false)
+        .ShowColonAfterLabel(true)
+        .FormData(Model)
+        )
+    
+    @(Html.DevExtreme().Button()
+        .Text("Validate and Submit")
+        .ValidationGroup("Order")
+        .UseSubmitBehavior(false)
+        .OnClick("sendOrder")
+        )
+}
 <div>
     <a asp-action="Index" asp-controller="Home">Назад к списку заказов</a>
 </div>
@@ -53,44 +81,45 @@
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
     <script type="text/javascript">
-        let form = $("#orderForm");
-        let orderItemList = [];
-        let count = 1;
-        $("#btnAddItem").on("click",
-            function () {
-                let qty = Number($("#Quantity").val().replace(',', '.'));
-                let item = AddItemToTable($("#ItemName").val(), qty, $("#Unit").val(), count);
-                orderItemList.push(item.orderItem);
-                $("#orderItemsTable").append(item.rowString);
-                count++;
-                console.log(orderItemList);
-                $("#ItemName").val('');
-                $("#Quantity").val('');
-                $("#Unit").val('');
-            });
+        let form = $("#addOrderForm");
+
+        function sendOrder(e) {
+            if (e.validationGroup.validate().isValid) {
+                $("#OrderItems").dxDataGrid("instance").getDataSource().load().done(function(items) {
+                    for (let i = 0; i < items.length; i++) {
+                        let item = items[i];
+                        console.log(item);
+                        for (let property in item) {
+                            if (item.hasOwnProperty(property)) {
+                                CreateInputElement(property, item[property], i, form[0]);
+                                console.log(property);
+                            }
+                        }
+                    }
+                    form.submit();
+                });
+            }
+        }
+        function CreateInputElement(itemName, itemValue, itemIndex, container) {
+            let $input = $("<input/>");
+            $input.appendTo(container).attr({ type: "hidden", name: "OrderItems[" + itemIndex + "]." + itemName }).val(itemValue);
+        }
         form.on("submit",
             function(e) {
                 e.preventDefault();
-                let order = JSON.stringify({
-                    name: $("#Name").val(),
-                    date: $("#Date").val(),
-                    provider: {
-                        id: $("#Provider_Id").val(),
-                        name: $("#Provider_Id option:selected").text()
-                    },
-                    orderItems: orderItemList
-                });
                 if (form.valid()) {
+                    let values = form.serializeArray();
                     $.ajax({
                         url: form.attr("action"),
-                        data: order,
+                        data: JSON.stringify(values),
                         type: "POST",
                         contentType: "application/json",
                         success: function() {
                             window.location = "@Url.Action("Index","Home")";
                         },
                         error: function(result) {
-                            console.log(result);
+                            console.log(values);
+                            console.log(result.responseText);
                             alert("Ошибка добавления");
                         }
                     });

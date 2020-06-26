@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Builder;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json.Serialization;
 using OrderManagement.Domain.Contracts;
 using OrderManagement.Domain.Contracts.Services;
 using OrderManagement.Domain.Implementation.Profiles;
@@ -27,7 +29,7 @@ namespace OrderManagement.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews().AddNewtonsoftJson();
+            services.AddControllersWithViews().AddNewtonsoftJson(o=>o.SerializerSettings.ContractResolver = new DefaultContractResolver());
             services.AddAutoMapper(typeof(MappingProfile));
             services.AddDatabase(Configuration);
             services.AddSwagger();

@@ -1,30 +1,29 @@
-﻿@model List<OrderModel>
-@{
-    var i = 1;
-}
-<table class="table table-hover">
-    <thead class="thead-dark">
-    <tr>
-        <th scope="col">#</th>
-        <th scope="col">Название заказа</th>
-        <th scope="col">Дата</th>
-        <th scope="col">Поставщик</th>
-    </tr>
-    </thead>
-    <tbody>
-    @if (Model.Any())
+﻿@(Html.DevExtreme().DataGrid<OrderModel>()
+    .ID("gridContainer")
+    .ShowBorders(true)
+    .DataSource(d=>d.WebApi().Controller("Order").LoadAction("GetAll").Key("Id"))
+        .HoverStateEnabled(true)
+    .FilterRow(f=>f.Visible(true))
+    .HeaderFilter(f=>f.Visible(true))
+    .Columns(c =>
     {
-        @foreach (var order in Model)
-        {
-            <tr onclick="location.href = '@Url.Action("GetOrder", "Order", new {id = order.Id})' ">
-                <th scope="row">@i</th>
-                <td>@order.Name</td>
-                <td>@order.Date.ToString("G")</td>
-                <td>@order.Provider.Name</td>
-            </tr>
-            i++;
-        }
-    }
-
-    </tbody>
-</table>
+        c.AddFor(o => o.Name);
+        c.AddFor(o=>o.Date).Format("dd.MM.yyyy hh:mm:ss");
+        c.AddFor(o => o.Provider.Name);
+        c.Add().Type(GridCommandColumnType.Buttons).Buttons(b => b.Add()
+            .Hint("Edit").Icon("edit").OnClick("function(e) { window.location.href = '/Order/' + e.row.data.Id; }"));
+    })
+    .MasterDetail(md=>md.Enabled(true)
+        .Template(@<text>
+                      @(Html.DevExtreme().DataGrid<OrderItemModel>()
+                          .DataSource(ds=>ds.Mvc()
+                              .Controller("Order")
+                              .LoadAction("GetOrderDetails")
+                              .LoadParams(new { orderId = new JS("key") }))
+                          .Columns(c =>
+                              {
+                                  c.AddFor(oi => oi.ItemName).Caption("Название");
+                                  c.AddFor(oi => oi.Quantity).Caption("Количество");
+                                  c.AddFor(oi => oi.Unit).Caption("Единицы");
+                              }))
+                   </text>)))

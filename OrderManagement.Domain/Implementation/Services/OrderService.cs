@@ -114,5 +114,12 @@ namespace OrderManagement.Domain.Implementation.Services
             await _dbRepository.SaveChangesAsync();
         }
 
+        public List<OrderItemModel> GetOrderItems(int orderId)
+        {
+            var orderItemEntities = _dbRepository.GetAll<OrderItemEntity>()
+                .Where(items => items.OrderEntityId == orderId);
+            var orderItemModels = _mapper.Map<List<OrderItemModel>>(orderItemEntities);
+            return orderItemModels;
+        }
     }
 }

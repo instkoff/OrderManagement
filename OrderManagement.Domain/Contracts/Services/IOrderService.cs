@@ -13,5 +13,6 @@ namespace OrderManagement.Domain.Contracts.Services
         Task<OrderModel> Get(int id);
         Task<int> Update(OrderModel orderModel);
         Task Delete(int id);
+        List<OrderItemModel> GetOrderItems(int id);
     }
 }
